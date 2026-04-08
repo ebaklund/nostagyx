@@ -63,6 +63,12 @@
 class MdxRaylib
 {
 public:
+    static int get_raylib_texcoords(const std::vector<MdxTexCoord>& mdx_texcoords, float*& raylib_texcoords) {
+        raylib_texcoords = new float[mdx_texcoords.size() * 2];
+        std::memcpy(raylib_texcoords, (float*)mdx_texcoords.data(), mdx_texcoords.size() * 2);
+
+        return mdx_texcoords.size();
+    }
 
     static int get_raylib_indices(const std::vector<MdxTriangle>& mdx_triangles, uint16_t*& raylib_indices) {
         raylib_indices = new uint16_t[mdx_triangles.size() * 3];
@@ -87,6 +93,7 @@ public:
     static void init_single_raylib_mesh(const MdxModel& mdx_model, int i, Mesh& raylib_mesh) {
         raylib_mesh.vertexCount = get_raylib_vertices(mdx_model.bone.meshes[i].vertices, raylib_mesh.vertices);
         raylib_mesh.triangleCount = get_raylib_indices(mdx_model.bone.meshes[i].triangles, raylib_mesh.indices);
+        get_raylib_texcoords(mdx_model.bone.meshes[i].tex_coords, raylib_mesh.texcoords);
     }
 
     static int get_raylib_meshes(const MdxModel& mdx_model, Mesh*& meshes_out) {
