@@ -32,7 +32,7 @@
 #include <raylib-cpp.hpp>
 #include "zip_reader.hpp"
 #include "mdx_reader.hpp"
-#include "mdx_raylib.hpp"
+#include "mdx_to_raylib.hpp"
 
 //------------------------------------------------------------------------------------
 // Program main entry point

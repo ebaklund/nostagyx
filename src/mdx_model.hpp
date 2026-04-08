@@ -39,6 +39,14 @@ struct MdxTexCoord {
 
 struct MdxTriangle {
     int32_t vertex[3];
+
+    template<typename T>
+    static T* get_indices(const int32_t* in, T* out) {
+        *(out++) = (T)*(in++);
+        *(out++) = (T)*(in++);
+        *(out++) = (T)*(in++);
+        return out;
+    }
 };
 
 struct MdxRotation {

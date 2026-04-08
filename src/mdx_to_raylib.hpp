@@ -63,20 +63,30 @@
 class MdxRaylib
 {
 public:
-    static int get_raylib_vertices(const MdxModel& mdx_model, int i, float*& raylib_vertices) {
-        auto mdx_vertices = mdx_model.bone.meshes[i].vertices;
-        int vertex_count = mdx_vertices.size();
-        raylib_vertices = new float[vertex_count * 3];
-        float* rvp = raylib_vertices;
+
+    static int get_raylib_indices(const std::vector<MdxTriangle>& mdx_triangles, uint16_t*& raylib_indices) {
+        raylib_indices = new uint16_t[mdx_triangles.size() * 3];
+        uint16_t* outp = raylib_indices;
+
+        for (const MdxTriangle& mdx_triangle : mdx_triangles)
+            outp = MdxTriangle::get_indices(mdx_triangle.vertex, outp);
+
+        return mdx_triangles.size();
+    }
+
+    static int get_raylib_vertices(const std::vector<MdxVertex>& mdx_vertices, float*& raylib_vertices) {
+        raylib_vertices = new float[mdx_vertices.size() * 3];
+        float* outp = raylib_vertices;
 
         for (const MdxVertex& mdx_vertex : mdx_vertices)
-            rvp = MdxVertex::get_coord_f3(mdx_vertex.coord, rvp);
+            outp = MdxVertex::get_coord_f3(mdx_vertex.coord, outp);
 
-        return vertex_count;
+        return mdx_vertices.size();
     }
 
     static void init_single_raylib_mesh(const MdxModel& mdx_model, int i, Mesh& raylib_mesh) {
-        raylib_mesh.vertexCount = get_raylib_vertices(mdx_model, i, raylib_mesh.vertices);
+        raylib_mesh.vertexCount = get_raylib_vertices(mdx_model.bone.meshes[i].vertices, raylib_mesh.vertices);
+        raylib_mesh.triangleCount = get_raylib_indices(mdx_model.bone.meshes[i].triangles, raylib_mesh.indices);
     }
 
     static int get_raylib_meshes(const MdxModel& mdx_model, Mesh*& meshes_out) {
@@ -88,6 +98,8 @@ public:
 
         return mesh_count;
     }
+
+    // Model
 
     static Model get_raylib_model_from(const MdxModel& mdx_model) {
         Model raylib_model;
