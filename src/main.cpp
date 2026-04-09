@@ -31,8 +31,8 @@
 #include <iostream>
 #include <raylib-cpp.hpp>
 #include "zip_reader.hpp"
-#include "mdx_reader.hpp"
 #include "mdx_to_raylib.hpp"
+#include "raylib_model_loader.hpp"
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -42,16 +42,17 @@ int main(void)
     // Initialization
     //--------------------------------------------------------------------------------------
 
-    ZipReader zip_reader("../assets/GUN-TACTYX.dat");
+    nyx::RaylibModelLoader nyx_model_loader("../assets/GUN-TACTYX.dat");
+
+    Model gun_model;
+    nyx_model_loader.load(gun_model, "gun.mdx", "gun.jpg");
+
+    nyx::ZipReader zip_reader("../assets/GUN-TACTYX.dat");
     auto asset_names = zip_reader.get_file_names();
 
     std::cout << "Asset names:\n";
     for (const auto& name : *asset_names)
         std::cout << name << "\n";
-
-    std::vector<uint8_t> gun_data = zip_reader.fread("gun.mdx");
-    std::unique_ptr<MdxModel> mdx_gun_model = MdxReader::read_mdx_model(gun_data);
-    Model raylib_gun_model = MdxRaylib::get_raylib_model_from(*mdx_gun_model);
 
     const int screenWidth = 1600;
     const int screenHeight = 900;
